@@ -1,0 +1,19 @@
+{
+  "triggeredExpression": {
+    "greater": "{deviceName} {sensorId} > {value} {unit}",
+    "greaterOrEqual": "{deviceName} {sensorId} >= {value} {unit}",
+    "less": "{deviceName} {sensorId} < {value} {unit}",
+    "lessOrEqual": "{deviceName} {sensorId} <= {value} {unit}",
+    "equal": "{deviceName} {sensorId} = {value} {unit}",
+    "notEqual": "{deviceName} {sensorId} ≠ {value} {unit}",
+    "between": "{deviceName} {sensorId} is between {between0} {unit} and {between1} {unit}",
+    "updated": "{deviceName} {sensorId} is updated in {value} seconds",
+    "contain": "{deviceName} {sensorId} contains {value} {unit}",
+    "isOneOf": "{deviceName} {sensorId} is one of {value} {unit}"
+  },
+  "triggeredCurrentValue": {
+    "updated": "{deviceName} {sensorId} is updated at {value}",
+    "default": "{deviceName} {sensorId} = {value} {unit}"
+  },
+  "messagePrefix": "This is the message from the CHTCityOS."
+}

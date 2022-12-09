@@ -1,0 +1,54 @@
+# type Query {
+#   getResponseMsg(groupId: ID,deviceIds: [String]): ResponseMSG_Merge_Connection!
+# }
+type Mutation {
+  updateMessageboard(groupId: ID!, UpdateMessageboardInput: UpdateMessageboardInput!): Boolean
+  
+  addMessageboard(groupId: ID!, MessageboardInput:MessageboardInput!): Boolean
+ 
+  deleteMessageboard(id: ID!): Boolean
+
+
+}
+
+interface Devicemessageboard {
+  deviceId: String!
+  content: String!
+  user: String
+  status:String
+  file:String
+}
+
+type MessageboardInput implements Devicemessageboard{
+  deviceId: String!
+  content: String!
+  user: String
+  status:String
+  file:String
+}
+
+input MessageboardInput {
+  deviceId: String!
+  content: String!
+  user: String
+  status:String
+  file:String
+}
+
+type UpdateMessageboardInput implements Devicemessageboard{
+  id: String!
+  deviceId: String!
+  content: String!
+  user: String
+  status:String
+  file:String
+}
+
+input UpdateMessageboardInput {
+  id: String!
+  deviceId: String!
+  content: String!
+  user: String
+  status: String
+  file:String
+}

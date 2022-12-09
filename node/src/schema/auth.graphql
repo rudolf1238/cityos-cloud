@@ -1,0 +1,67 @@
+type Mutation {
+  """Login to the CityOS.  (required 'recaptcha' in the headers)"""
+  login(loginInput: LoginInput!): LoginPayload
+  """Send the confirmation email when user is using the new device."""
+  deviceBinding(refreshToken: String!): Boolean
+  """Validate the correctness of the user's email, and publish the deviceToken to user who has subscribed."""
+  verifyAccessCode(accessCode: String!): Boolean
+  """Get the new accessToken by refreshToken and deviceToken."""
+  refreshToken(refreshToken: String!, deviceToken: String!): RefreshTokenPayload
+  """Send the reset password email when user clicks on 'Reset Password'. (required 'recaptcha' in the headers)"""
+  forgotPassword(email: String!): Boolean
+  """Reset the password by accessCode received from the email, and UI should confirm the two passwords are identical."""
+  resetPassword(resetPasswordInput: ResetPasswordInput!): Boolean
+  """Change the password for the current user."""
+  changePassword(changePasswordInput: ChangePasswordInput!): Boolean
+   """Logout from the CityOS."""
+  logout(refreshToken: String!): Boolean
+}
+
+type Subscription {
+  """Listen to the deviceToken after user requested the device confirmation email."""
+  listenVerifyStatusChanged(refreshToken: String!): ListenVerifyStatusChangedPayload!
+}
+
+input LoginInput {
+  """User email for the current user"""
+  email: String!
+  """User password"""
+  password: String!
+}
+
+input ResetPasswordInput {
+  """the accessCode received from the email to reset the password"""
+  accessCode: String!
+  """the new password"""
+  password: String!
+}
+
+input ChangePasswordInput {
+  """the old password"""
+  oldPassword: String!
+  """the new password"""
+  newPassword: String!
+}
+
+type LoginPayload {
+  """the token to identify the user log in successfully"""
+  refreshToken: String
+  """the expired time for refreshToken"""
+  refreshTokenExpiresAt: Date
+}
+
+type RefreshTokenPayload {
+  """the token to access the resource for the entire CityOS server"""
+  accessToken: String
+  """the expired time for accessToken"""
+  accessTokenExpiresAt: Date
+  """the token to identify the user log in successfully"""
+  refreshToken: String
+  """the expired time for refreshToken"""
+  refreshTokenExpiresAt: Date
+}
+
+type ListenVerifyStatusChangedPayload {
+  """the token to identify the device is verified successfully"""
+  deviceToken: String
+}

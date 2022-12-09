@@ -1,0 +1,305 @@
+type Query {
+  """
+  Get all devices by device types, status or retangle of the region.
+  """
+  searchDevices(
+    groupId: ID!
+    filter: DeviceFilter
+    size: Int = 10
+    after: String
+    before: String
+  ): DeviceConnection!
+  """
+  Get all devices from CHT IOT platform.
+  """
+  devicesFromIOT(
+    groupId: ID!
+    type: DeviceType
+    name: String
+    desc: String
+  ): [Device]
+  """
+  Get device detail by deviceId.
+  """
+  getDevices(deviceIds: [String!]!): [IDevice]
+  searchAbnormalDevices(
+    groupId: ID!
+    filter: DeviceFilter
+    size: Int = 10
+    skip: Int = 0
+  ): DeviceConnection!
+  """
+  Get all devices by device types, status or retangle of the region.
+  """
+  searchDevicesOnMap(groupId: ID!, filter: MapDeviceFilter): MapDevices!
+  """
+  Get all devices by device types, status or retangle of the region.
+  """
+  searchClustersOnMap(
+    groupId: ID!
+    filter: MapDeviceFilter
+    level: Int
+  ): MapClusters!
+}
+
+type Mutation {
+  """
+  Edit the name, description, location or attributes for the device.
+  """
+  editDevice(deviceId: String!, editDeviceInput: EditDeviceInput!): Boolean
+  """
+  Add devices to this group, and deviceIds is the array of deviceId.
+  """
+  addDevices(groupId: ID!, deviceIds: [String!]!): Boolean
+  """
+  Delete devices from the group. Return all deviceIds are deleted successfully.
+  """
+  deleteDevices(groupId: ID!, deviceIds: [String!]!): [String]
+  """
+  Restore devices from the group. Return all deviceIds are restored successfully.
+  """
+  restoreDevices(groupId: ID!, deviceIds: [String!]!): [String]
+}
+
+interface IDevice {
+  id: ID!
+  deviceId: String!
+  name: String!
+  desc: String
+  uri: String!
+  type: DeviceType!
+  location: GPSPoint
+  sensors: [Sensor]
+  groups: [Group]!
+  status: DeviceStatus
+  maintainstatus: MaintainStatus
+  attributes: [Attribute]
+  timezone: Timezone
+  imageIds: [String]
+  # eSignagePlayerName: String
+}
+
+type Device implements IDevice {
+  id: ID!
+  deviceId: String!
+  name: String!
+  desc: String
+  uri: String!
+  type: DeviceType!
+  location: GPSPoint
+  sensors: [Sensor]
+  groups: [Group]!
+  status: DeviceStatus
+  maintainstatus: MaintainStatus
+  attributes: [Attribute]
+  timezone: Timezone
+  floors: [Floor]
+  imageIds: [String]
+}
+
+type MapDevices {
+  devices: [IDevice!]!
+}
+
+type MapClusters {
+  cluster: [DevicesCluster!]!
+  gpsRect: GPSRect
+}
+
+type DevicesCluster {
+  location: GPSPoint!
+  count: Int!
+}
+
+type GPSRect {
+  """
+  the point at its south-west corner
+  """
+  sw: GPSPoint
+  """
+  the point at its north-east corner
+  """
+  ne: GPSPoint
+}
+
+type GPSPoint {
+  lat: Float!
+  lng: Float!
+}
+
+type Attribute {
+  key: String
+  value: String
+}
+
+input DeviceFilter {
+  """
+  fitler by the device type
+  """
+  type: DeviceType
+  """
+  filter by the device status
+  """
+  status: DeviceStatus
+  """
+  filter by the maintain status
+  """
+  maintainstatus: MaintainStatus
+  """
+  filter by the lamp schedule is enable or not
+  """
+  enableSchedule: Boolean
+  """
+  fitler by the keyword, it will search deviceId, name and desc fields
+  """
+  keyword: String
+  """
+  fitler by the specific attributes
+  """
+  attribute: AttributeInput
+  """
+  sorting by this field
+  """
+  sortField: SortField
+  """
+  sorting in the ascending or descending order
+  """
+  sortOrder: SortOrder
+  """
+  all of the related devices are ACTIVE (include the lamp itself)
+  """
+  isDevicesUnderLampActive: Boolean
+  """
+  filter device is disabled or not
+  """
+  disabled: Boolean
+  gpsRectInput: GPSRectInput
+}
+
+input MapDeviceFilter {
+  """
+  fitler by the device type
+  """
+  type: DeviceType
+  """
+  filter by the lamp schedule is enable or not
+  """
+  enableSchedule: Boolean
+  """
+  fitler by the keyword, it will search deviceId, name and desc fields
+  """
+  keyword: String
+  """
+  filter by the display boundary according to the map
+  """
+  gpsRectInput: GPSRectInput
+  """
+  all of the related devices are ACTIVE (include the lamp itself)
+  """
+  isDevicesUnderLampActive: Boolean
+}
+
+input GPSRectInput {
+  """
+  the point at its south-west corner
+  """
+  sw: GPSPointInput!
+  """
+  the point at its north-east corner
+  """
+  ne: GPSPointInput!
+}
+
+input GPSPointInput {
+  lat: Float!
+  lng: Float!
+}
+
+input EditDeviceInput {
+  name: String
+  desc: String
+  """
+  provide this field only if the location is changed and set it to null to clear the location.
+  """
+  location: GPSPointInput
+  attributes: [AttributeInput]
+  imageIds: [String]
+}
+
+type DeviceConnection {
+  edges: [DeviceEdge!]!
+  gpsRect: GPSRect
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type DeviceEdge {
+  cursor: String!
+  node: IDevice!
+}
+
+type Timezone {
+  """
+  the offset from UTC (in seconds)
+  """
+  rawOffset: Int!
+  """
+  a string containing the ID of the time zone, such as 'Asia/Taipei'
+  """
+  timeZoneId: String!
+  """
+  a string containing the long form name of the time zone, such as 'Taipei Standard Time'
+  """
+  timeZoneName: String!
+}
+
+input AttributeInput {
+  key: String!
+  value: String!
+}
+
+enum DeviceType {
+  LAMP
+  SOLAR
+  CHARGING
+  CAMERA
+  WATER
+  ENVIRONMENT
+  WIFI
+  DISPLAY
+  UNKNOWN
+  BUILDING
+  INDOOR_LAMP
+  CHILLER
+  SPEAKER
+  FIRE_ALARM
+  POWER_METER
+  ELEVATOR
+  BANPU_INDOOR_METER
+  OPEN_DATA_WEATHER
+  USAGE_METER
+}
+
+enum SortField {
+  ID
+  NAME
+  TYPE
+  STATUS
+  MAINTAINSTATUS
+}
+
+enum SortOrder {
+  ASCENDING
+  DESCENDING
+}
+
+enum DeviceStatus {
+  ACTIVE
+  ERROR
+}
+
+enum MaintainStatus {
+  DONE
+  PROCESSING
+  ERROR
+}

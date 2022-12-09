@@ -1,0 +1,131 @@
+type Query {
+  """
+  Get the group according to the group id.
+  """
+  getGroup(groupId: ID!): Group
+  """
+  List all groups under the current user.
+  """
+  searchGroups: [Group]!
+}
+
+type Mutation {
+  """
+  Create a group.
+  """
+  createGroup(createGroupInput: CreateGroupInput!): Boolean!
+  """
+  Delete a group. You cannot delete your own group or the group not at LEAF level.
+  """
+  deleteGroup(groupId: ID!): Boolean!
+  """
+  Edit the group name and the sensorMask of the group.
+  """
+  editGroup(groupId: ID!, editGroupInput: EditGroupInput!): Boolean!
+}
+
+type Group {
+  id: ID!
+  """
+  the name of this group
+  """
+  name: String!
+  """
+  the direct path of the current group, and it will show ids of parent and grandparent,..., and so on
+  """
+  ancestors: [ID]
+  """
+  the project key from CHT IOT platform
+  """
+  projectKey: String
+  """
+  the sensorMask decided the ability of the sensors in this group
+  """
+  sensorMask: SensorMask
+  """
+  the groups under the current group (direct childs)
+  """
+  subGroups: [ID]
+  """
+  list all sensors under this group
+  """
+  sensors(deviceType: DeviceType, deviceIds: [String!]): [Sensor!]!
+  """
+  number of devices under this group and all subgroups
+  """
+  deviceCount: Int
+  """
+  number of users under this group only
+  """
+  userCount: Int
+  """
+  the level from top to bottom is ROOT -> PROJECT -> PARENT -> LEAF
+  """
+  level: Level
+
+  companyId: String
+  logo: String
+  url: String
+  line: String
+}
+
+type SensorMask {
+  """
+  enable the sensor mask or not
+  """
+  enable: Boolean
+  """
+  the list of sensorId which could be read in this group
+  """
+  sensors: [SensorMaskInfo]
+}
+
+type SensorMaskInfo {
+  deviceType: DeviceType
+  sensorId: String
+}
+
+input CreateGroupInput {
+  """
+  required except for the root group
+  """
+  parentGroupId: ID!
+  """
+  the name of this group
+  """
+  name: String!
+}
+
+input EditGroupInput {
+  """
+  the name of this group
+  """
+  name: String
+  """
+  the sensor mask of this group
+  """
+  sensorMaskInput: SensorMaskInput
+}
+
+input SensorMaskInput {
+  """
+  enable the sensor mask or not
+  """
+  enable: Boolean
+  """
+  the list of sensorId which could be read in this group
+  """
+  sensors: [SensorMaskInfoInput]
+}
+
+input SensorMaskInfoInput {
+  deviceType: DeviceType!
+  sensorId: String!
+}
+
+enum Level {
+  ROOT
+  PROJECT
+  PARENT
+  LEAF
+}

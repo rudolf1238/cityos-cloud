@@ -1,0 +1,89 @@
+type Query {
+  """
+  Get all devices by device types, status or retangle of the region.
+  """
+  searchDevices(
+    groupId: ID!
+    filter: DeviceFilter
+    size: Int = 10
+    after: String
+  ): DeviceConnection!
+  """
+  Get all devices from CHT IOT platform.
+  """
+  devicesFromIOT(
+    groupId: ID!
+    type: DeviceType
+    name: String
+    desc: String
+  ): [Device]
+  """
+  Get device detail by deviceId.
+  """
+  getDevices(deviceIds: [String!]!): [IDevice]
+  searchAbnormalDevices(
+    groupId: ID!
+    filter: DeviceFilter
+    size: Int = 10
+    after: String
+  ): DeviceConnection!
+}
+
+type Mutation {
+ 
+  updateMessageboardSon(groupId: ID!, UpdateMessageboardSonInput: UpdateMessageboardSonInput!): Boolean
+ 
+  addMessageboardSon(
+    groupId: ID!
+    MessageboardInputSon: MessageboardInputSon!
+  ): Boolean
+  
+  deleteMessageboardSon(id: ID!): Boolean
+  
+  restoreDevices(groupId: ID!, deviceIds: [String!]!): [String]
+}
+
+interface DevicemessageboardSon {
+  deviceId: String!
+  msgId: String!
+  content: String!
+  user: String
+  status: String
+  file:String
+}
+
+type MessageboardInputSon implements DevicemessageboardS {
+  deviceId: String!
+  msgId: String!
+  content: String!
+  user: String
+  status: String
+  file:String
+}
+
+input MessageboardInputSon {
+  deviceId: String!
+  msgId: String!
+  content: String!
+  user: String
+  status: String
+  file:String
+}
+
+type UpdateMessageboardSonInput implements Devicemessageboard {
+  id: String!
+  deviceId: String!
+  content: String!
+  user: String
+  status: String
+  file:String
+}
+
+input UpdateMessageboardSonInput {
+  id: String!
+  deviceId: String!
+  content: String!
+  user: String
+  status: String
+  file:String
+}

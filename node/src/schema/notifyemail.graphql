@@ -1,0 +1,6 @@
+type NotifyEmail {  
+  malfunctioning_device_notify_id: ID  
+  emailAddr: String
+  emailTitle: String
+  emalContent: String 
+}

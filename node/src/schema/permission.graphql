@@ -1,0 +1,80 @@
+type Query {
+  """
+  Get all role templates in the CityOS
+  """
+  roleTemplates: [RoleTemplate]
+}
+type Mutation {
+  """
+  Create a role template.
+  """
+  createRoleTemplate(
+    name: String!
+    permissionInputs: [PermissionInput!]!
+  ): RoleTemplate
+  """
+  Delete a role template.
+  """
+  deleteRoleTemplate(templateId: ID!): Boolean
+  """
+  Edit a role template.
+  """
+  editRoleTemplate(
+    templateId: ID!
+    name: String
+    permissionInputs: [PermissionInput!]
+  ): RoleTemplate
+}
+
+input PermissionInput {
+  """
+  The action of the permission.
+  """
+  action: Action!
+  """
+  The subject of the permission.
+  """
+  subject: Subject!
+}
+
+enum Action {
+  VIEW
+  ADD
+  REMOVE
+  MODIFY
+  EXPORT
+}
+
+enum Subject {
+  DASHBOARD
+  LIGHTMAP
+  GROUP
+  DEVICE
+  USER
+  ROLE_TEMPLATE
+  INFO
+  ELASTIC_SEARCH
+  IVS_SURVEILLANCE
+  IVS_EVENTS
+  WIFI
+  INDOOR
+  ABNORMAL_MANAGEMENT
+  MAINTENANCE_STAFF
+  AUTOMATION_RULE_MANAGEMENT
+  ESIGNAGE
+}
+
+type RoleTemplate {
+  id: ID!
+  name: String
+  permission: Permission
+}
+
+type Permission {
+  rules: [Rule]
+}
+
+type Rule {
+  action: Action!
+  subject: Subject!
+}

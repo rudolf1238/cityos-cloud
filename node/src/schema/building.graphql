@@ -1,0 +1,166 @@
+type Query {
+  getBuildings(groupId:ID!, filter:DeviceFilter): GetBuilding
+  getLatLonByAddress(address:String): GPSPoint
+  searchDevicesForBuilding(
+    groupId: ID!
+    deviceId: ID!
+    filter: DeviceFilterForBuilding
+    size: Int = 10
+    after: String
+    before: String
+  ): DeviceConnection!
+
+}
+type Mutation {
+  createBuilding(groupId: ID!, buildingInput: BuildingInput!): String
+  updateBuilding(
+    groupId: ID!,
+    deviceId: String!,
+    buildingInput: BuildingInput!
+  ): Boolean
+  deleteBuilding(groupId: ID!, deviceId: String!): Boolean
+  updateFloorplan(groupId: ID!, deviceId: String!, floorNum: String!, imageId: ID!): String
+}
+
+type Building implements IDevice {
+  id: ID!
+  deviceId: String!
+  name: String!
+  desc: String
+  uri: String!
+  type: DeviceType!
+  location: GPSPoint!
+  groups: [Group]!
+  sensors: [Sensor]
+  status: DeviceStatus
+  attributes: [Attribute]
+  timezone: Timezone
+  floors: [Floor]
+  address: [Address]
+  maintainstatus: MaintainStatus
+  # floorsdetail: [DeviceUnderFloor]
+  imageIds: [String]
+}
+
+type GetBuilding {
+  edges: [BuildingEdge!]!
+}
+
+type BuildingEdge {
+  node: Building!
+  deviceCount: Int
+}
+
+type Floor {
+  id: ID!
+  name: String!
+  floorNum: String!
+  # floorNum: Int!
+  # objectID
+  devices: [Device]
+    imageLeftTop: [String]
+  imageRightBottom: [String]
+}
+
+# type DeviceUnderFloor {
+#   id: ID!
+#   name: String!
+#   floorNum: Int!
+#   # objectID
+#   devices: [Device]!
+#   imageLeftTop: [String]
+#   imageRightBottom: [String]
+
+# }
+
+input FloorInput {
+  id: ID!
+  name: String!
+  # floorNum: Int!
+  floorNum: String!
+  devices: [ID!]
+  imageLeftTop: [String]
+  imageRightBottom: [String]
+}
+
+input DeviceFilter {
+  deviceId: String
+}
+
+type Address {
+  language: String
+  detail: AddressDetail
+}
+
+type AddressDetail {
+  country: String
+  city: String
+  formattedAddress: String
+}
+
+input AddressInput {
+  language: String
+  detail: AddressDetailInput
+}
+
+input AddressDetailInput {
+  country: String
+  city: String
+  formattedAddress: String
+}
+
+input BuildingInput {
+  name: String!
+  desc: String
+  floors: [FloorInput]
+  location: GPSPointInput!
+  buildingType: String
+  x:String
+  y:String
+  degree:String
+}
+
+input DeviceFilterForBuilding {
+  """
+  fitler by the device type
+  """
+  type: [String]
+  """
+  filter by the device status
+  """
+  status: DeviceStatus
+  """
+  filter by the maintain status
+  """
+  maintainstatus: MaintainStatus
+  """
+  filter by the lamp schedule is enable or not
+  """
+  enableSchedule: Boolean
+  """
+  fitler by the keyword, it will search deviceId, name and desc fields
+  """
+  keyword: String
+  """
+  fitler by the specific attributes
+  """
+  attribute: [AttributeInput]
+  """
+  sorting by this field
+  """
+  sortField: SortField
+  """
+  sorting in the ascending or descending order
+  """
+  sortOrder: SortOrder
+  """
+  all of the related devices are ACTIVE (include the lamp itself)
+  """
+  isDevicesUnderLampActive: Boolean
+  """
+  filter device is disabled or not
+  """
+  disabled: Boolean
+  gpsRectInput: GPSRectInput
+  usedForBuilding: Boolean
+}

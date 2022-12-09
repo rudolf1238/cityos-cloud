@@ -1,0 +1,38 @@
+type Query {
+  """Get the elasticsearch setting of the platform"""
+  elasticSearchSetting: [ElasticSearchSensor!]
+}
+
+type Mutation {
+  """Add the sensor history from the CHT IOT platform"""
+  addToElasticSearch(elasticSearchInput: ElasticSearchInput!): ElasticSearchSensor!
+  """Delete all sensor history from the elasticsearch"""
+  deleteFromElasticSearch(deviceType: DeviceType!, sensorId: String!): ElasticSearchSensor!
+  """Enable or disable the import from the CHT IOT to elasticsearch"""
+  enableElasticSearch(deviceType: DeviceType!, sensorId: String!, enable: Boolean!): ElasticSearchSensor!
+}
+
+type Subscription {
+  """Listen to status of sync from IOT to elasticsearch changed."""
+  processElasticSearchChanged(deviceType: DeviceType!, sensorId: String!): ElasticSearchSensor!
+}
+
+input ElasticSearchInput {
+  deviceType: DeviceType!
+  sensorId: String!
+  from: Date!
+  """(optinal) If not specified, server will process all history sensors till the oldest records in the elasticsearch."""
+  to: Date
+}
+
+type ElasticSearchSensor {
+  deviceType: DeviceType!
+  sensorId: String!
+  sensorName: String!
+  sensorType: SensorType!
+  from: Date
+  to: Date
+  enable: Boolean!
+  """status should be 0(processing) to 100(completed), also represent the progress of processing"""
+  status: Int!
+}

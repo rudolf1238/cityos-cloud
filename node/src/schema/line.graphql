@@ -1,0 +1,11 @@
+type Mutation {
+  """Enter the credential to get the nonce and then redirect the user to the account link endpoint"""
+  lineBinding(email: String!, password: String!): LineBindingPayload
+  """Exchange the token from LINE notify"""
+  lineNotifyBinding(code: String!, state: String!): Boolean
+}
+
+type LineBindingPayload {
+  """the string that used once (provide this in the account link endpoint)"""
+  nonce: String!
+}

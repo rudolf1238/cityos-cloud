@@ -1,0 +1,212 @@
+type Camera implements IDevice {
+    id: ID!
+  deviceId: String!
+  name: String!
+  desc: String
+  uri: String!
+  type: DeviceType!
+  location: GPSPoint
+  sensors: [Sensor]
+  groups: [Group]!
+  status: DeviceStatus
+  maintainstatus: MaintainStatus
+  attributes: [Attribute]
+  timezone: Timezone
+  imageIds: [String]
+}
+
+type Query {
+  """Get the URL to play the HLS video."""
+  getVideoURL(deviceIds: [String!]!): GetVideoURLPayload
+  """Get the video history files for one camera device."""
+  getVideoHistory(deviceId: String!, from: Date!, to: Date!): GetVideoHistoryPayload
+  """Get the live view config for the current user."""
+  readLiveViewConfig: LiveViewConfig
+  """Get the history for the recognized events."""
+  cameraEventHistory(groupId: ID!, filter: CameraEventFilter!, size: Int = 10, after: String, before: String): CameraEventConnection!
+}
+
+type Mutation {
+  """Extend 20 minutes more to keep the video playable."""
+  keepVideoAlive(token: String!, urlTokenList: [String]!): KeepVideoAlivePayload
+  """Save the live view config for the current user."""
+  saveLiveViewConfig(input: LiveViewConfigInput!): LiveViewConfig
+}
+
+type GetVideoURLPayload {
+  token: String!,
+  urlToken: String!,
+  expiredAt: Date!,
+  streamList: [LiveStream]!
+}
+
+type GetVideoHistoryPayload {
+  expiredAt: Date!,
+  clips: [VideoClip]!
+}
+
+type LiveStream {
+  """the deviceId of this camera"""
+  deviceId: String!
+  """the camId of this camera"""
+  camId: String!,
+  """the url you can get the HLS video"""
+  url: String!
+}
+
+type VideoClip {
+  """the url you can get the mp4 video"""
+  url: String!
+  """the start timestamp of this mp4 video"""
+  start: Date!
+}
+
+type KeepVideoAlivePayload {
+  expiredAt: Date!
+}
+
+type LiveViewConfig {
+  """live view deivces for the cameras"""
+  devices: [LiveViewDevice!]
+  """remember split mode for 1X1, 2X2 or 3X3, etc."""
+  splitMode: SplitMode
+  """enable the slideshow or not"""
+  autoplay: Boolean
+  """slideshow duration between different screens in seconds"""
+  autoplayInSeconds: Int
+}
+
+input LiveViewDeviceInput {
+  deviceId: String!
+  fixedIndex: Int
+}
+
+type LiveViewDevice {
+  deviceId: String!
+  fixedIndex: Int
+}
+
+type CameraEventConnection {
+  edges: [CameraEventEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type CameraEventEdge {
+  cursor: String!
+  node: ICameraEvent!
+}
+
+input LiveViewConfigInput {
+  """devices for the camera"""
+  devices: [LiveViewDeviceInput!]
+  """remember split mode for 1X1, 2X2 or 3X3, etc."""
+  splitMode: SplitMode
+  """enable the slideshow or not"""
+  autoplay: Boolean
+  """slideshow duration between different screens in seconds"""
+  autoplayInSeconds: Int
+}
+
+input CameraEventFilter {
+  """specifiy the start date of the history"""
+  from: Date!
+  """specifiy the end date of the history"""
+  to: Date!
+  """show the results for these devices only"""
+  deviceIds: [String!]
+  """filter the specific event type (set to specific type, and only specific filter input will be considered)"""
+  type: RecognitionType
+  """sorting by this field"""
+  sortField: CameraEventSortField
+  """sorting in the ascending or descending order"""
+  sortOrder: SortOrder
+  """filter for HUMAN_SHAPE"""
+  humanShapeFilterInput: HumanShapeFilterInput
+  """filter for CAR_IDENTIFY"""
+  carIdentifyFilterInput: CarIdentifyFilterInput
+  """filter for HUMAN_FLOW_ADVANCE"""
+  humanFlowAdvanceFilterInput: HumanFlowAdvanceFilterInput
+}
+
+input HumanShapeFilterInput {
+  gender: String
+  clothesColor: String
+}
+
+input CarIdentifyFilterInput {
+  vehicleType: String
+  vehicleColor: String
+  numberPlate: String
+}
+
+input HumanFlowAdvanceFilterInput {
+  humanFlowSex: String
+  humanFlowAge: Int
+}
+
+enum SplitMode {
+  SINGLE
+  FOUR
+  NINE
+  SIXTEEN
+}
+
+interface ICameraEvent {
+  deviceId: String!
+  deviceName: String!
+  time: Date!
+  type: RecognitionType!
+}
+
+type HumanShapeEvent implements ICameraEvent {
+  deviceId: String!
+  deviceName: String!
+  time: Date!
+  type: RecognitionType!
+  pedestrian: String
+  gender: String
+  clothesColor: String
+}
+
+type CarIdentifyEvent implements ICameraEvent {
+  deviceId: String!
+  deviceName: String!
+  time: Date!
+  type: RecognitionType!
+  vehicle: String
+  vehicleType: String
+  vehicleColor: String
+  numberPlate: String
+}
+
+type HumanFlowAdvanceEvent implements ICameraEvent {
+  deviceId: String!
+  deviceName: String!
+  time: Date!
+  type: RecognitionType!
+  humanFlowSex: String
+  humanFlowAge: Int
+  humanFlowImage: String
+}
+
+enum RecognitionType {
+  HUMAN_FLOW
+  HUMAN_FLOW_ADVANCE
+  HUMAN_SHAPE
+  CAR_IDENTIFY
+  CAR_FLOW
+}
+
+enum CameraEventSortField {
+  TIME
+  ID
+  RECOGNITION_TYPE
+  GENDER
+  CLOTHES_COLOR
+  VEHICLE_TYPE
+  VEHICLE_COLOR
+  NUMBER_PLATE
+  HUMAN_FLOW_SEX
+  HUMAN_FLOW_AGE
+}

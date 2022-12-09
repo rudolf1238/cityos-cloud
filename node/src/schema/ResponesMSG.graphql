@@ -1,0 +1,124 @@
+type Query {
+  getResponseMsg(
+    groupId: ID
+    deviceIds: [String]
+    page: Int
+    size: Int
+  ): ResponseMSG_Merge_Connection!
+}
+
+interface IResponseMSG {
+  id: String
+  deviceId: String!
+  createdAt: Date!
+  updatedAt: Date!
+  content: String
+  user: [User]!
+  name: String
+  pictureId: String
+  photo: String
+  status: String
+}
+
+type ResponseMSG implements IResponseMSG {
+  deviceId: String!
+  createdAt: Date!
+  updatedAt: Date!
+  content: String
+  user: [User]!
+  id: String
+  name: String
+  pictureId: String
+  photo: String
+  status: String
+}
+
+type ResponseMSGEdge {
+  cursor: String!
+  node: ResponseMSG!
+}
+
+type ResponseMSGGroup {
+  value: String
+  label: String
+  id: String
+}
+
+type ResponseMSGConnection {
+  pageInfo: PageInfo!
+  totalCount: Int!
+  groups: [ResponseMSGGroup]
+  edges: [ResponseMSGEdge!]!
+}
+
+interface IResponseMSG_Son {
+  createdAt: Date!
+  updatedAt: Date!
+  content: String
+  user: [User]!
+  msgId: String!
+  id: String
+  name: String
+  pictureId: String
+  status: String
+  photo: String
+}
+
+type ResponseMSG_Son implements IResponseMSG_Son {
+  createdAt: Date!
+  updatedAt: Date!
+  content: String
+  user: [User]!
+  msgId: String!
+  id: String
+  name: String
+  pictureId: String
+  status: String
+  photo: String
+}
+
+type ResponseMSG_Son_Edge {
+  cursor: String!
+  node: ResponseMSG_Son!
+}
+
+type ResponseMSG_Son_Group {
+  value: String
+  label: String
+  id: String
+}
+
+type ResponseMSG_Son_Connection {
+  pageInfo: PageInfo!
+  totalCount: Int!
+  groups: [ResponseMSG_Son_Group]
+  edges: [ResponseMSG_Son_Edge!]!
+}
+
+interface IResponseMSG_Merge {
+  responsemsgFa: ResponseMSG
+  responsemsgSon: [ResponseMSG_Son]
+}
+
+type ResponseMSG_Merge implements IResponseMSG_Merge {
+  responsemsgFa: ResponseMSG
+  responsemsgSon: [ResponseMSG_Son]
+}
+
+type ResponseMSG_Merge_Edge {
+  cursor: String!
+  node: ResponseMSG_Merge!
+}
+
+type ResponseMSG_Merge_Group {
+  value: String
+  label: String
+  id: String
+}
+
+type ResponseMSG_Merge_Connection {
+  pageInfo: PageInfo!
+  totalCount: Int!
+  groups: [ResponseMSG_Merge_Group]
+  edges: [ResponseMSG_Merge_Edge!]!
+}

@@ -1,0 +1,78 @@
+type Query {
+"""Get maldevice detail by Id."""
+  getMalDevices(groupId: ID filter: MaldeviceFilter, size: Int, after: String): MalDeviceConnection!  
+  
+}
+
+type Mutation {      
+  addMlDevices(groupId: ID!, MalDeviceInput: MalDeviceInput!) : Boolean
+
+  updateMlDevices(groupId: ID!, MalDeviceUpdate: MalDeviceUpdate!) : Boolean
+
+  deleteMlDevices(groupId: ID!, names: [String!]!): [String]
+  
+}
+
+interface IMalDevice {   
+  name: String!
+  deviceType: [DeviceType!]!
+  notifyType: [NotifyType!]!
+  status: String!
+  division_id: [ID!]! 
+}
+
+type MalDevice implements IMalDevice{    
+  name: String!
+  deviceType: [DeviceType!]!
+  notifyType: [NotifyType!]!
+  status: String!
+  division_id: [ID!]!  
+}
+
+type MalDeviceEdge {
+  cursor: String!
+  node: MalDevice!
+}
+
+type MalDeviceConnection {
+  pageInfo: PageInfo!
+  totalCount: Int! 
+  edges: [MalDeviceEdge!]!  
+}
+
+input MalDeviceInput {
+  name: String!
+  deviceType: [DeviceType!]!
+  notifyType: [NotifyType!]!
+  division_id: [ID!]!  
+  status: String! 
+}
+
+input MalDeviceUpdate {  
+  queryname: String!
+  name: String
+  deviceType: [DeviceType]
+  notifyType: [NotifyType]
+  division_id: [ID]  
+  status: String    
+}
+
+enum NotifyType {
+  EMAIL
+  LINE   
+  SMS   
+}
+
+enum MaldeviceSortField {  
+  NAME  
+  STATUS
+}
+
+input MaldeviceFilter {
+  """fitler by the keyword, it will search email, name or phone"""
+  keyword: String
+  """sorting by this field"""
+  maldeviceSortField: MaldeviceSortField
+  """sorting in the ascending or descending order"""
+  sortOrder: SortOrder
+}

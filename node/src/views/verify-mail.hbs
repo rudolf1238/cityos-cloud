@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Verify mail</title>
+  <style>
+    body,
+    html {
+      padding: 0;
+      margin: 0;
+    }
+  
+    .header {
+      width: 100%;
+      background-color: #F7F7F7;
+      background-image: none;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
+      background-size: cover;
+      padding: 54px 9px;
+      box-sizing: border-box;
+    }
+  
+    .logo {
+      width: 600px;
+      margin: auto;
+      padding: 0 9px;
+      max-width: 100%;
+    }
+    .logo > img {
+      margin: 0 9px;
+    }
+  
+    .content {
+      width: 600px;
+      margin: auto;      
+      max-width: 100%;
+      padding: 27px 9px 63px 9px;
+      box-sizing: border-box;
+    }
+  
+    .title {
+      color: #222222;
+      font-size: 28px;
+      font-weight: bold;
+      line-height: 150%;
+    }
+  
+    .des {
+      color: #808080;
+      font-size: 18px;
+      line-height: 200%;
+      padding: 10px 0;
+    }
+  
+    .footer {
+      width: 100%;
+      background-color: #e4e7e9;
+      padding: 45px 9px 63px 9px;
+      text-align: center;
+      color: #808080;
+      box-sizing: border-box;
+  
+    }
+  
+    .verifyBtn {
+      border-radius: 3px;
+      border: 0;
+      background-color: #323232;
+      font-size: 24px;
+      padding: 30px;
+      font-family: Lato, Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      letter-spacing: 1px;
+      line-height: 100%;
+      text-align: center;
+      color: #FFFFFF;
+      display: inline-block;
+      text-decoration: none;
+      /* cursor: pointer; */
+    }
+  
+    .reset {
+      text-decoration: none;
+    }
+  
+    .pwd {
+      margin-bottom: 18px;
+      width: 100%;
+      height: 56px;
+      border: 1px solid #B2B0B0;
+      border-radius: 3px;
+      box-sizing: border-box;
+      text-align: center;
+      font-size: 16px;
+    }
+  
+    .pwd::placeholder {
+      color: #AEADAD;
+    }
+  
+    #app {
+      width: 100%;
+      font-family: lato, helvetica neue, helvetica, arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <div class="logo">
+        <img src="cid:logo" alt="">
+      </div>
+    </div>
+    <div class="content">
+      <div class="title">{{title}}</div>
+      <div class="des">
+        {{!-- use HTML escaping --}}
+        {{{desc}}}
+      </div>
+      <div class="btn">
+        <a href="{{validationUrl}}" class="verifyBtn">{{btn}}</a>
+      </div>
+    </div>
+    <div class="footer">
+       <em>© Chunghwa Telecom Co., Ltd.</em>
+    </div>
+  </div>
+</body>

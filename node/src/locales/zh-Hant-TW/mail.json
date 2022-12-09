@@ -1,0 +1,28 @@
+{
+  "invite": {
+    "subject": "{username}\n邀請您加入中華電信CityOS",
+    "action": "接受邀請"
+  },
+  "login": {
+    "subject": "中華電信CityOS的登入確認",
+    "message": "您已要求登入中華電信CityOS。\n\n請點選連結確認登入。",
+    "action": "確認登入",
+    "extra": "若您沒有要求登入，請忽略這封信即可。"
+  },
+  "resetPassword": {
+    "subject": "忘記密碼？",
+    "message": "沒關係！\n\n點選下列按鈕來重設您的密碼。若您沒有要求更改密碼，請您忽略這封信。請放心，您的密碼將不會被更改。",
+    "action": "重設密碼"
+  },
+  "contact": {
+    "subject": "CityOS客戶服務來自{organization}",
+    "message": "<b>公司/組織</b>: {organization}\n<b>姓名</b>: {name}\n<b>手機號碼</b>: {phone}\n<b>電子郵件</b>: {email}\n<b>訊息內容</b>: {message}"
+  },
+  "automationNotify": {
+    "subject": "來自CHTCityOS的訊息通知",
+    "message": "{message}",
+    "action": "查看來源"
+  },
+  "signature": "中華電信CityOS團隊",
+  "footer": "© 2021 CHUNGHWA TELECOM CO. LTD."
+}

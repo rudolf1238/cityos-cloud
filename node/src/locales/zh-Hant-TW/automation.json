@@ -1,0 +1,19 @@
+{
+  "triggeredExpression": {
+    "greater": "{deviceName} {sensorId} > {value} {unit}",
+    "greaterOrEqual": "{deviceName} {sensorId} >= {value} {unit}",
+    "less": "{deviceName} {sensorId} < {value} {unit}",
+    "lessOrEqual": "{deviceName} {sensorId} <= {value} {unit}",
+    "equal": "{deviceName} {sensorId} = {value} {unit}",
+    "notEqual": "{deviceName} {sensorId} ≠ {value} {unit}",
+    "between": "{deviceName} {sensorId} 介於 {between0} {unit} 和 {between1} {unit}",
+    "updated": "{deviceName} {sensorId} 更新於 {value}秒內",
+    "contain": "{deviceName} {sensorId} 包含 {value} {unit}",
+    "isOneOf": "{deviceName} {sensorId} 於 {value} {unit} 當中"
+  },
+  "triggeredCurrentValue": {
+    "updated": "{deviceName} {sensorId} 更新於 {value}",
+    "default": "{deviceName} {sensorId} = {value} {unit}"
+  },
+  "messagePrefix": "這是來自CHTCityOS的訊息通知。"
+}

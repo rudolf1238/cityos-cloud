@@ -1,0 +1,20 @@
+scalar Date
+scalar Any
+
+type Mutation {
+  """Send the contact email from the landing page."""
+  contactUs(contactUsInput: ContactUsInput!): Boolean
+}
+
+input ContactUsInput {
+    """user's organization or business"""
+    organization: String
+    """user's name"""
+    name: String!
+    """user's phone number"""
+    phone: String
+    """user's email"""
+    email: String!
+    """the message delivered by this user"""
+    message: String!
+}

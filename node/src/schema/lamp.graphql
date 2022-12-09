@@ -1,0 +1,107 @@
+type Mutation {
+  """Update the light schedule for the lamp."""
+  updateLampSchedule(deviceId: String!, lightScheduleInput: LightScheduleInput!): Boolean
+}
+
+type Lamp implements IDevice {
+    id: ID!
+  deviceId: String!
+  name: String!
+  desc: String
+  uri: String!
+  type: DeviceType!
+  location: GPSPoint
+  sensors: [Sensor]
+  groups: [Group]!
+  status: DeviceStatus
+  maintainstatus: MaintainStatus
+  attributes: [Attribute]
+  timezone: Timezone
+  lightSchedule: LightSchedule
+  related: [IDevice]
+  """is there the light sensor on this lamp"""
+  hasLightSensor: Boolean
+  imageIds: [String]
+}
+
+input LightScheduleInput {
+  """using light sensor to control the brightness of the intelligent light"""
+  lightSensorInput: LightSensorInput
+  """using user defined schedule to control the brightness of the intelligent light"""
+  manualScheduleInput: ManualScheduleInput
+}
+
+input ManualScheduleInput {
+  """true represents using the manual schedule to control the light automatically"""
+  enableManualSchedule: Boolean
+  """customized the schedule manually"""
+  schedules: [ScheduleInput]
+}
+
+input ScheduleInput {
+  """the start month of the schedule"""
+  startMonth: Int!
+  """the start day of the schedule"""
+  startDay: Int!
+  """the system will set the brightness to [brightness] at [hour]:[minute] daily"""
+  lightControlInputs: [LightControlInput!]!
+}
+
+input LightSensorInput {
+  """true represents using the light sensor to control the brightness automatically"""
+  enableLightSensor: Boolean
+  """the group of sensor condition to set the [brightness] of the light when the ambient light less than [lessThan]"""
+  lightSensorConditionInput: [LightSensorConditionInput]
+}
+
+input LightControlInput {
+  hour: Int!
+  minute: Int!
+  brightness: Int!
+}
+
+input LightSensorConditionInput {
+  lessThan: Int!
+  brightness: Int!
+}
+
+type LightSchedule {
+  """using light sensor to control the brightness of the intelligent light"""
+  lightSensor: LightSensor
+  """using user defined schedule to control the brightness of the intelligent light"""
+  manualSchedule: ManualSchedule
+}
+
+type LightSensor {
+  """true represents using the light sensor to control the brightness automatically"""
+  enableLightSensor: Boolean
+  """the group of sensor condition to set the [brightness] of the light when the ambient light less than [lessThan]"""
+  lightSensorCondition: [LightSensorCondition]
+}
+
+type ManualSchedule {
+  """true represents using the manual schedule to control the light automatically"""
+  enableManualSchedule: Boolean
+  """customized the schedule manually"""
+  schedules: [Schedule]
+}
+
+type Schedule {
+  """the start month of the schedule"""
+  startMonth: Int!
+  """the start day of the schedule"""
+  startDay: Int!
+  """the system will set the brightness to [brightness] at [hour]:[minute] daily"""
+  lightControls: [LightControl!]!
+}
+
+type LightControl {
+  hour: Int!
+  minute: Int!
+  brightness: Int!
+}
+
+type LightSensorCondition {
+  lessThan: Int!
+  brightness: Int!
+}

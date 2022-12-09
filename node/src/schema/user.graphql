@@ -1,0 +1,151 @@
+type Query {
+  """Get the detail of this user."""
+  userProfile: User!
+  """Get all users under this group. You can search by email, name or phone."""
+  searchUsers(groupId: ID!, filter: UserFilter, size: Int = 10, after: String, before: String): UserConnection!
+  """List possible users when user input keyword. It is useful in auto completed."""
+  possibleUsers(keyword: String!, size: Int = 10, groupId: ID): [PossibleUser]
+}
+
+type Mutation {
+  """Send the invitation mail to the user."""
+  inviteUser(inviteUserInput: InviteUserInput!): User
+  """Click on 'Create account' and use this API to create the user."""
+  createUser(createUserInput: CreateUserInput!): CreateUserPayload
+  """Edit the user's permission in the specific group"""
+  editUser(email: String!, groupId: ID!, permissions: [PermissionInput]!): User
+  """Delete the users from the group. Return all user emails are deleted successfully."""
+  deleteUsers(groupId: ID!, emails: [String!]!): [String]
+  """Update the user's profile."""
+  updateProfile(updateProfileInput: UpdateProfileInput!): User
+}
+
+input InviteUserInput {
+  """email for the this user"""
+  email: String!
+  """the group id of this user"""
+  groupId: ID!
+  """The permission rules for this user"""
+  permissions: [PermissionInput]
+}
+
+input CreateUserInput {
+  """email for the this user"""
+  email: String!
+  """the group id of this user"""
+  password: String!
+  """The display for this user"""
+  name: String!
+  """The phone for this user"""
+  phone: String!
+  """the code from the email to create the user"""
+  accessCode: String!
+  """the preferred language for this user"""
+  language: Language!
+}
+
+input UpdateProfileInput {
+  """display name of the user"""
+  name: String
+  """phone of the user"""
+  phone: String
+  """the preferred language for this user"""
+  language: Language
+  """the preferred theme for this user"""
+  theme: Theme
+  """avatar of the user"""
+  photo: String
+}
+
+input UserFilter {
+  """fitler by the keyword, it will search email, name or phone"""
+  keyword: String
+  """sorting by this field"""
+  userSortField: UserSortField
+  """sorting in the ascending or descending order"""
+  sortOrder: SortOrder
+
+  Maintenance:Boolean
+}
+
+type PossibleUser {
+  name: String
+  email: String!
+}
+
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type CreateUserPayload {
+  """the token to identify the user log in successfully"""
+  refreshToken: String!
+  """the expired time for refreshToken"""
+  refreshTokenExpiresAt: Date!
+  """the token to identify the device is verified successfully"""
+  deviceToken: String!
+}
+
+type User {
+   id: String
+  """email of the user"""
+  email: String!
+  """display name of the user"""
+  name: String!
+  """phone of the user"""
+  phone: String!
+  """account status of the user"""
+  status: UserStatus!
+  """group of the user"""
+  groups: [GroupInfo!]!
+  """the preferred language for this user"""
+  language: Language!
+  photo: String
+  lineId: String
+  isMaintenance:Boolean
+  """the preferred theme for this user"""
+  theme: Theme!
+  """indicate the user has the lineUserId and lineNotifyToken or not"""
+  isLINEConnected: Boolean!
+}
+
+type GroupInfo {
+  """show this group and apply the permission"""
+  inUse: Boolean
+   """the group information"""
+  group: Group
+   """the permission information"""
+  permission: Permission
+}
+
+enum UserStatus {
+  """the user status should be Waiting after calling inviteUser"""
+  WAITING
+  """the user status should be Active after user accepts the invitation"""
+  ACTIVE
+  """the user status should be Suspend if someone suspends him for some reasons"""
+  SUSPEND
+}
+
+enum UserSortField {
+  EMAIL
+  NAME
+  PHONE
+}
+
+enum Language {
+  zh_Hant_TW
+  en_US
+}
+
+enum Theme {
+  LIGHT
+  DARK
+}

@@ -1,0 +1,278 @@
+type Query {
+  """List all rules under the specific group"""
+  searchRules(groupId: ID!, filter: RuleFilter, size: Int = 10, after: String, before: String): RuleConnection!
+  """List all subscriptions for the current user"""
+  searchMySubscriptions(filter: SubscriptionFilter, size: Int = 10, after: String, before: String): SubscriptionConnection!
+  """List all automation audit logs for the current user"""
+  searchAuditLogs(filter: AuditLogFilter, size: Int = 10, after: String, before: String): AuditLogConnection!
+}
+
+type Mutation {
+  """Create a rule."""
+  createRule(createRuleInput: CreateRuleInput!): RuleAutomation!
+  """Delete a rule."""
+  deleteRule(ruleId: ID!): Boolean!
+  """Edit a rule. Provide the thenNotify and thenDevice at the same time to override them."""
+  editRule(ruleId: ID!, editRuleInput: EditRuleInput!): RuleAutomation!
+  """Edit my subscription."""
+  editMySubscription(ruleId: ID!, byLine: Boolean!, byMail: Boolean!): RuleSubscription!
+}
+
+type RuleConnection {
+  edges: [RuleEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type RuleEdge {
+  cursor: String!
+  node: RuleAutomation!
+}
+
+type RuleAutomation {
+  id: ID!
+  name: String!
+  group: Group!
+  effectiveAt: EffectiveAt!
+  logic: Logic
+  if: [AutomationTrigger!]!
+  then: [AutomationAction!]!
+}
+
+type EffectiveAt {
+  """timezone to specific the time you provided. Using the IANA standard name. (ex. Asia/Taipei stands for Taipei time - UTC+8)"""
+  timezone: String!
+  """rule is valid between these days."""
+  effectiveDate: EffectiveDate!
+  """rule is valid between these weekdays (1 is Monday and 7 is Sunday)."""
+  effectiveWeekday: [Int!]!
+  """rule is valid between these time."""
+  effectiveTime: EffectiveTime!
+}
+
+type EffectiveDate {
+  startMonth: Int!
+  startDay: Int!
+  endMonth: Int!
+  endDay: Int!
+}
+
+type EffectiveTime {
+  fromHour: Int!
+  fromMinute: Int!
+  toHour: Int!
+  toMinute: Int!
+}
+
+type AutomationTrigger {
+  deviceType: DeviceType!
+  devices: [Device!]!
+  logic: Logic
+  conditions: [Condition!]!
+}
+
+type Condition {
+  sensorId: String!
+  operator: TriggerOperator!
+  value: String!
+}
+
+type SubscriptionConnection {
+  edges: [SubscriptionEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type SubscriptionEdge {
+  cursor: String!
+  node: RuleSubscription!
+}
+
+type RuleSubscription {
+  rule: RuleAutomation!
+  byLine: Boolean!
+  byMail: Boolean!
+}
+
+interface AutomationAction {
+  actionType: ActionType!
+}
+
+type NotifyAction implements AutomationAction {
+  actionType: ActionType!
+  users: [User!]
+  message: String!
+  snapshot: Boolean!
+}
+
+type DeviceAction implements AutomationAction {
+  actionType: ActionType!
+  deviceType: DeviceType!
+  devices: [Device!]!
+  sensorId: String!
+  setValue: String!
+}
+
+type AuditLogConnection {
+  edges: [AuditLogEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AuditLogEdge {
+  cursor: String!
+  node: RuleAuditLog!
+}
+
+type RuleAuditLog {
+  ruleId: ID!
+  ruleName: String!
+  group: Group!
+  triggeredTime: Date!
+  triggeredExpression: String!
+  triggeredCurrentValue: String!
+  notifyActions: [NotifyAction!]!
+  deviceActions: [DeviceAction!]!
+}
+
+input RuleFilter {
+  """fitler by the keyword, it will search RuleID, RuleName, DeviceID, DeviceName, SensorID, UserName and Message fields"""
+  keyword: String
+  """sorting by this field"""
+  sortField: RuleSortField
+  """sorting in the ascending or descending order"""
+  sortOrder: SortOrder
+}
+
+input CreateRuleInput {
+  name: String!
+  groupId: ID!
+  effectiveAtInput: EffectiveAtInput!
+  logic: Logic
+  if: [AutomationTriggerInput!]!
+  thenNotify: [NotifyActionInput!]
+  thenDevice: [DeviceActionInput!]
+}
+
+input EffectiveAtInput {
+  """timezone to specific the time you provided. Using the IANA standard name. (ex. Asia/Taipei stands for Taipei time - UTC+8)"""
+  timezone: String!
+  """rule is valid between these days."""
+  effectiveDate: EffectiveDateInput!
+  """rule is valid between these weekdays (1 is Monday and 7 is Sunday)."""
+  effectiveWeekday: [Int!]!
+  """rule is valid between these time."""
+  effectiveTime: EffectiveTimeInput!
+}
+
+input EffectiveDateInput {
+  startMonth: Int!
+  startDay: Int!
+  endMonth: Int!
+  endDay: Int!
+}
+
+input EffectiveTimeInput {
+  fromHour: Int!
+  fromMinute: Int!
+  toHour: Int!
+  toMinute: Int!
+}
+
+input AutomationTriggerInput {
+  deviceType: DeviceType!
+  deviceIds: [String!]!
+  logic: Logic
+  conditions: [ConditionInput!]!
+}
+
+input ConditionInput {
+  sensorId: String!
+  operator: TriggerOperator!
+  value: String!
+}
+
+input NotifyActionInput {
+  userMails: [String!]
+  message: String!
+  snapshot: Boolean!
+}
+
+input DeviceActionInput {
+  deviceType: DeviceType!
+  deviceIds: [String!]!
+  sensorId: String!
+  setValue: String!
+}
+
+input EditRuleInput {
+  name: String
+  effectiveAtInput: EffectiveAtInput
+  logic: Logic
+  if: [AutomationTriggerInput!]
+  thenNotify: [NotifyActionInput!]
+  thenDevice: [DeviceActionInput!]
+}
+
+input SubscriptionFilter {
+  """fitler by the keyword, it will search RuleID, RuleName, DeviceID, DeviceName, SensorID fields"""
+  keyword: String
+  """sorting by this field"""
+  sortField: SubscriptionSortField
+  """sorting in the ascending or descending order"""
+  sortOrder: SortOrder
+}
+
+input AuditLogFilter {
+  """fitler by the keyword, it will search RuleID, RuleName, TriggeredExpression, TriggeredCurrentValue, ModifiedSensor, UserName fields"""
+  keyword: String
+  """sorting by this field"""
+  sortField: AuditLogSortField
+  """sorting in the ascending or descending order"""
+  sortOrder: SortOrder
+}
+
+enum RuleSortField {
+  ID
+  NAME
+  EFFECTIVE_DATE
+  EFFECTIVE_TIME
+}
+
+enum Logic {
+  AND
+  OR
+}
+
+enum TriggerOperator {
+  GREATER
+  GREATER_OR_EQUAL
+  LESS
+  LESS_OR_EQUAL
+  EQUAL
+  NOT_EQUAL
+  BETWEEN
+  UPDATED
+  CONTAIN
+  IS_ONE_OF
+}
+
+enum ActionType {
+  NOTIFY
+  DEVICE
+}
+
+enum SubscriptionSortField {
+  ID
+  NAME
+  GROUP
+  EFFECTIVE_DATE
+  EFFECTIVE_TIME
+}
+
+enum AuditLogSortField {
+  ID
+  NAME
+  GROUP
+  TIME
+}

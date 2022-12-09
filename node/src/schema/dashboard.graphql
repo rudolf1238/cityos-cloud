@@ -1,0 +1,16 @@
+type Query {
+  """Read the dashboard configs from the current user."""
+  readDashboard: [DashboardConfig!]
+}
+
+type Mutation {
+  """Update the dashboard config for this index."""
+  saveDashboard(index: Int!, config: String!): Boolean
+}
+
+type DashboardConfig {
+  """the index of this config"""
+  index: Int!
+  """the config for this dashboard"""
+  config: String!
+}

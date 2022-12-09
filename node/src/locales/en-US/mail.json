@@ -1,0 +1,28 @@
+{
+  "invite": {
+    "subject": "{username}\nhas invited you to join CHT CityOS",
+    "action": "Accept Invitation"
+  },
+  "login": {
+    "subject": "Login confirmation for the CityOS",
+    "message": "You have requested access to the CHT CityOS.\n\nPlease click the link to confirm login.",
+    "action": "Confirm Login",
+    "extra": "If you didn’t request a code, you can simply ignore this email."
+  },
+  "resetPassword": {
+    "subject": "Forgot your password?",
+    "message": "That’s ok, it happens!\n\nClick on the button below to reset your password. If you did not request a password reset or received this email by mistake, you can safely ignore it. Your password won’t be changed.",
+    "action": "Reset Password"
+  },
+  "contact": {
+    "subject": "CityOS Customer Support from {organization}",
+    "message": "<b>Business/Organization</b>: {organization}\n<b>Name</b>: {name}\n<b>Phone Number</b>: {phone}\n<b>Email</b>: {email}\n<b>Message</b>: {message}\n"
+  },
+  "automationNotify": {
+    "subject": "The Message Nottification from the CHTCityOS",
+    "message": "{message}",
+    "action": "Check it out"
+  },
+  "signature": "The CHT CityOS Team",
+  "footer": "© Chunghwa Telecom Co., Ltd."
+}

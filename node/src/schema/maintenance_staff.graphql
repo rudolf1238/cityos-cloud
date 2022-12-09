@@ -1,0 +1,73 @@
+type Query {
+  getMaintenanceUser(groupId: ID, deviceId: String): Response_MaintenanceUser!
+
+  getMaintenance_devicelist(
+    groupId: ID
+    userId: String
+    filter: DeviceFilter
+    size: Int = 10
+    after: String
+  ): Maintenance_devicelistConnection!
+
+  searchAddDevices(
+    groupId: ID!
+    userId: String
+    filter: DeviceFilter
+  ): AddDeviceConnection!
+}
+
+type Mutation {
+  deleteStaffs(groupId: ID!, userIds: [String!]!): [String]
+  addDevices_Staff(groupId: ID!, deviceIds: [String!]!, userId: ID!): Boolean
+  deleteStaffDevices(groupId: ID!, deviceIds: [String!]!, userId: ID!): [String]
+}
+
+interface IMaintenance_devicelist {
+  id: String
+  userId: String
+}
+
+type Maintenance_devicelist implements IMaintenance_devicelist {
+  id: String
+  userId: String
+}
+
+type Maintenance_devicelistEdge {
+  cursor: String!
+  node: Maintenance_devicelist!
+  device: DeviceConnection
+  # adddevice: DeviceConnection
+}
+
+type Maintenance_devicelistGroup {
+  value: String
+  label: String
+  id: String
+}
+
+type Maintenance_devicelistConnection {
+  pageInfo: PageInfo!
+  totalCount: Int!
+  groups: [Maintenance_devicelistGroup]
+  edges: [Maintenance_devicelistEdge]
+}
+
+type Response_MaintenanceUser {
+  edge: [MaintenanceUserEdge!]!
+}
+
+type MaintenanceUserEdge {
+  id: String!
+  name: String
+  email: String
+}
+type AddDeviceConnection {
+  edges: [DeviceEdge!]!
+  totalCount: Int!
+  device: [DeviceEdge]
+}
+
+input AddStaffDeviceInput {
+  deviceId: String
+  userId: [AttributeInput]
+}

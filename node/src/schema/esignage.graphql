@@ -1,0 +1,417 @@
+type Query {
+  getTemplateType(groupId:ID!, page:Int = 1, pageSize:Int, filter: Filter): GetEsignageTemplateType
+  getWeatherStyle(groupId:ID!, page:Int = 1, pageSize:Int,, filter: Filter): GetWeatherStyle
+  getLanguage(groupId:ID!, page:Int = 1, pageSize:Int, filter: Filter): GetLanguage
+  getCity(groupId:ID!, page:Int = 1, pageSize:Int, filter: CityFilter): GetCity
+  getWeatherDataByCity(groupId:ID!, cityId:String):GetWeatherData
+  getContentType(groupId:ID!, page:Int = 1, pageSize:Int, filter: Filter): GetContentType
+  getTemplate(groupId:ID!, page:Int = 1, pageSize:Int, filter: Filter): GetTemplate
+  getTemplateLogs(groupId:ID!, page:Int = 1, pageSize:Int, filter: Filter): GetTemplateLogs
+  getDivision(groupId: ID!, filter: Filter): GetDivision
+  getTemplateContent(groupId: ID!, templateId: ID!):GetTemplateContent
+  getMediaPool(groupId:ID!, page:Int = 1, pageSize:Int, filter: Filter): GetMediaPool
+  getPlayerData(groupId: ID!, size: Int = 10, after: String, before: String): GetPlayerData
+  getTemplateSchedule(groupId:ID!, templateId: String!, page:Int = 1, pageSize:Int, filter: Filter): GetTemplateSchedule
+}
+type Mutation{
+  addTemplate(groupId:ID!, templateInput:TemplateInput!): String
+  updateTemplate(groupId:ID!, templateId: String!, updateTemplateInput: UpdateTemplateInput!): Boolean
+  updateTemplateContent(groupId:ID!, templateId: String!, updateTemplateContentInput: UpdateTemplateContentInput!): Boolean 
+  deleteTemplate(groupId:ID!, templateId: String!): Boolean
+  addTemplateSchedule(groupId:ID!, token:String! templateScheduleInput: TemplateScheduleInput!): String
+  updateTemplateSchedule(groupId:ID!, token:String!, templateScheduleInput: TemplateScheduleInput!, templateScheduleId:String!): Boolean
+  deleteTemplateSchedule(groupId:ID!, templateScheduleId: String!): Boolean
+  publishScheduleWithTemplate(groupId: ID!, publishScheduleInput: PublishScheduleInput!): PublishScheduleRes
+  updateTemplateContentAndAddSchedule(groupId:ID!, token:String!, updateTemplateContentInput: UpdateTemplateContentInput!, templateScheduleInput: TemplateScheduleInput!):String
+  updateTemplateContentAndUpdateSchedule(groupId:ID!, token:String!, templateScheduleId: String!, updateTemplateContentInput: UpdateTemplateContentInput!, templateScheduleInput: TemplateScheduleInput!):Boolean
+}
+type GetEsignageTemplateType {
+  esignageTemplateTypeOutput: [EsignageTemplateTypeOutput]!
+  totalCount:Int!
+}
+type EsignageTemplateTypeOutput {
+  id: String!
+  typeName: String!
+  resolution: String
+  description: String
+  templateImagePath_Light: String!
+  templateImagePath_Dark: String!
+  status: Int!
+}
+type GetTemplateContent {
+  id:String!
+  name: String!
+  templateTypeId: String!
+  description: String
+  group: String
+  templateContent: [TPContent]!
+}
+type TPContent {
+  contentId: String!
+  templateId: String!
+  contentTypeId: ID!
+  contentName: String!
+  rectId:String!
+  tag: String
+  x: Int
+  y: Int
+  width: Int
+  height: Int
+  templateContentDetail: TPContentDetail!
+  rectID:String!
+}
+type TPContentDetail {
+  weather: WeatherDeatail
+  media: [MediaDetail]
+  webpage: [WebpageDetail]
+  cam: [IpCamDetail]
+}
+type WeatherDeatail {
+  id:String!
+  weatherStyleId: ID!
+  temperatureUnit: String!
+  windSpeedUnit: String!
+  languageId: ID!
+  backgroundColor: String
+  durations: Int
+  citys: [ID]
+}
+type MediaDetail {
+  id:String!
+  mediaId: String!
+  imagePlayDurations: Int
+  originalname:String
+  size:Int
+}
+type WebpageDetail {
+  id:String!
+  webUrl: String!
+  playTime: Int
+}
+type IpCamDetail {
+  id:String!
+  camName: String!
+  rtspUrl: String!
+  durations: Int
+}
+type GetTemplate {
+  templateOutput: [TemplateOutput]!
+  totalCount:Int!
+}
+type TemplateOutput {
+  id: String!
+  name: String!
+  description: String
+  backgroundColor: String
+  group: ID
+  groupName: String
+  templateTypeId: String
+  typeName: String
+  typeResolution: String
+}
+type GetTemplateLogs {
+  templateLogsOutput: [TemplateLogsOutput]!
+  totalCount:Int!
+}
+type TemplateLogsOutput {
+  id: String!
+  name: String!
+  templateTypeId: String
+  description: String
+  backgroundColor: String
+  group: ID
+  groupName: String
+  templateId: ID
+  memo: String
+  user: String
+  typeResolution: String
+  cteatedAt: Date
+  updatedAt: Date
+}
+type GetWeatherStyle {
+  weatherStyleOutput:[WeatherStyleOutput]!
+  totalCount:Int!
+}
+type WeatherStyleOutput {
+  id: String!
+  style: String!
+  styleImage: ID
+  tag: String
+  status: Int!
+}
+type GetLanguage {
+  languageOutput:[LanguageOutput]!
+  totalCount:Int!
+}
+type LanguageOutput {
+  id: String!
+  languageCode: String!
+  status: Int!
+  languageName: String
+}
+type GetCity {
+  cityOutput:[CityOutput]!
+  totalCount:Int!
+}
+type CityOutput {
+  id: String!
+  cityName: String!
+  region: String!
+  status: Int!
+}
+input CityFilter {
+  keyword: String
+  sortField: CityField
+  sortOrder: SortOrder
+}
+enum CityField {
+  ID
+  CITYNAME
+  NAME
+}
+type GetWeatherData {
+  coord: Coord
+  weather: [WeatherData]
+  base: String
+  main: Main
+  visibility: Int
+  wind: Wind
+  clouds: Clouds
+  dt: Int
+  sys: Sys
+  timezone: Int
+  id: Int
+  name: String
+  cod: Int
+}
+type Coord {
+  lon: Float
+  lat: Float
+}
+type WeatherData {
+  id: Int
+  main: String
+  description: String
+  icon: String
+}
+type Main {
+  temp: Float
+  feels_like: Float
+  temp_min: Float
+  temp_max: Float
+  pressure: Int
+  humidity: Int
+}
+type Wind {
+  speed: Float
+  deg: Float
+  gust: Float
+}
+type Clouds {
+  all: Int
+}
+type Sys {
+  type: Int
+  id: Int
+  country: String
+  sunrise: Int
+  sunset: Int
+}
+type WeatherDataError {
+  status: String
+  message: String
+}
+type GetContentType {
+  contentTypeOutput:[ContentTypeOutput]!
+  totalCount:Int!
+}
+type ContentTypeOutput {
+  id: String!
+  typeName: String!
+  description: String
+  status: Int!
+}
+type GetDivision {
+  divisionOutput:[DivisionOutput]!
+  totalCount:Int!
+}
+type DivisionOutput {
+  id: String!
+  groupName: String!
+}
+type GetMediaPool {
+  mediaPoolOutput:[MediaPoolOutput]!
+  totalCount:Int!
+}
+type MediaPoolOutput {
+  id: String!
+  mediaId: String!
+  userId: String!
+  templateId: String
+}
+type GetPlayerData {
+  playerDataOutput:[PlayerDataOutput]!
+  totalCount:Int!
+}
+type PlayerDataOutput {
+  id: String!
+  deviceId: String!
+  type: String!
+  name: String
+  desc: String
+  playerName: String
+  serviceEndDate: String
+  serviceStartDate: String
+}
+type GetTemplateSchedule {
+  templateScheduleOutput:[TemplateScheduleOutput]!
+  totalCount:Int!
+}
+type TemplateScheduleOutput {
+  templateId: ID!
+  scheduleId: ID!
+  scheduleName: String!
+  playStartDate: String!
+  playEndDate: String
+  playStartTime: String!
+  playEndTime: String!
+  loopMode: String!
+  dailyFrequency: Int
+  weeklyFrequency: [String]
+  monthlyFrequency_Month: [String]
+  monthlyFrequency_Day: [Int]
+  audioSetting: Int!
+  downloadDirectly: Boolean!
+  scheduledDownloadTime: String
+}
+input Filter {
+  keyword: String
+  sortField: Sort
+  sortOrder: SortOrder
+}
+enum Sort {
+  ID
+  TYPENAME
+  STATUS
+}
+type PublishScheduleRes {
+  success: Boolean
+  statusCode: Int
+  message: String
+  payload: PublishSchedulePayload
+}
+type PublishSchedulePayload {
+  templateIDList: [Int]
+  scheduleType: String
+  scheduleID: Int
+}
+input UpdateTemplateInput {
+  name: String!
+  description: String!
+  templateTypeId: ID!
+  backgroundColor: String
+  group:String!
+}
+input TemplateInput {
+  name: String!
+  templateTypeId: ID!
+  description: String!
+  backgroundColor: String
+  group:String!
+  templateContent: [TemplateContent!]
+}
+input TemplateContent {
+  contentTypeId: ID!
+  contentName: String!
+  rectId:String!
+  tag: String
+  x: Int
+  y: Int
+  width: Int
+  height: Int
+  contentDeatail:ContentDetail!
+}
+input ContentDetail {
+  weather: Weather
+  media: [Media]
+  webpage: [Webpage]
+  ipCam: [IpCam]
+}
+input Weather {
+  weatherStyleId: ID!
+  temperatureUnit: String!
+  windSpeedUnit: String!
+  languageId: ID!
+  backgroundColor: String
+  durations: Int
+  citys: [ID]
+}
+input Media {
+  mediaId: ID!
+  imagePlayDurations: Int
+}
+input Webpage {
+  webUrl: String!
+  playTime: Int
+}
+input IpCam {
+  camName: String!
+  rtspUrl: String!
+  durations: Int
+}
+input UpdateTemplateContentInput {
+  updateTemplateContent:[UpdateTemplateContent!]
+}
+input UpdateTemplateContent {
+  contentId:ID!
+  contentTypeId: ID!
+  contentName: String!
+  rectId:String!
+  tag: String
+  x: Int
+  y: Int
+  width: Int
+  height: Int
+  contentDeatail:ContentDetail!
+}
+input TemplateScheduleInput {
+  templateId: ID!
+  scheduleName: String!
+  playStartDate: String!
+  playEndDate: String
+  playStartTime: String!
+  playEndTime: String!
+  loopMode: String!
+  dailyFrequency: Int
+  weeklyFrequency: [String]
+  monthlyFrequency_Month: [String]
+  monthlyFrequency_Day: [Int]
+  audioSetting: Int!
+  downloadDirectly: Boolean!
+  scheduledDownloadTime: String
+  players: [String]
+}
+input PublishScheduleInput {
+  playerIDList: [String]
+  templateWidth: Int #版型寬度 
+  templateHeight: Int #版型高度 
+  refreshSeconds: Int #版型時間|版型於 N 秒後重新載入
+  templateContentUrl: String #排程播放內容的網址,A~F版型
+  schedule: ScheduleApiModel #排程資訊
+}
+input ScheduleApiModel {
+  scheduleName: String #排程名稱 ,
+  startDate: String #播放開始日期, yyyy-MM-dd ,
+  startTime: String #播放開始時間(Local Time), HH:mm:ss ,
+  endDate: String #播放結束日期, yyyy-MM-dd ,
+  endTime: String #播放結束時間, HH:mm:ss ,
+  isPlayAllDay: Boolean #是否播放整天 ,
+  volume: Int #音量設定, 1-100 ,
+  periodicity: String #循環模式 = ['Daily', 'Weekly', 'Monthly'],
+  scheduleLoopDailyDays: Int #重複於每 N 天 (每日) ,dailyFrequency
+  scheduleLoopWeeklyDaysOfTheWeek: [String] #重複於每週的星期幾 (每週), Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday ,
+  scheduleLoopMonthlyMonthsOfTheYear: [String] #重複於哪幾個月 (每月), Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec ,
+  scheduleLoopMonthlyDaysOfTheMonth: [Int] #重複於每月的哪幾日 (每月) ,
+  isScheduleDownloadRightNow: Boolean #是否立即下載 ,
+  scheduleDownloadDateTime: String #排程下載時間
+}

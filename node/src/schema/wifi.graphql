@@ -1,0 +1,16 @@
+type Wifi implements IDevice {
+    id: ID!
+  deviceId: String!
+  name: String!
+  desc: String
+  uri: String!
+  type: DeviceType!
+  location: GPSPoint
+  sensors: [Sensor]
+  groups: [Group]!
+  status: DeviceStatus
+  maintainstatus: MaintainStatus
+  attributes: [Attribute]
+  timezone: Timezone
+  imageIds: [String]
+}

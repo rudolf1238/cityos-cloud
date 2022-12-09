@@ -1,0 +1,344 @@
+type Query {
+  searchCompanys(
+
+    groupId: ID!
+
+    email: String
+    filter: WifiFilter
+    currentPage: Int = 1
+    pageCount: Int = 10
+  ): ResponseWIFI
+
+  searchCompanyAdvance(groupId: ID!, companyId: String): DetailCompanyAdvance
+
+  """
+  For Area 
+  """
+  getAreaList(
+    groupId: ID!
+    companyId: String
+    filter: AreaFilter
+    currentPage: Int = 1
+    pageCount: Int
+  ): ResponseAREA
+
+  getArea(
+    groupId: ID!
+    companyId: String  
+    areaId: String
+  ): DetailArea
+
+  getAdList(
+    groupId: ID!
+    companyId: String
+    filter: AdFilter
+    currentPage: Int = 1
+    pageCount: Int = 10
+  ): ResponseAdList
+
+  getAd(
+    groupId: ID!
+    companyId: String!
+    id: String!
+  ): DetailAd
+}
+
+type ResponseWIFI {
+  divisions: [Detaildivision]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Detaildivision {
+  node: Group
+}
+
+type ResponseAREA {
+  areas: [DetailArea]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type DetailArea {
+  node: Area
+}
+
+type Area {
+  id: String
+  name: String
+  serviceStartDate : String
+  serviceEndDate : String
+}
+
+type ResponseAdList { 
+  pageInfo: PageInfo!
+  totalCount: Int!
+  ads: [AdList]!
+}
+
+type AdList {
+  node: SimpleAd
+}
+
+type SimpleAd {
+  id: String!    
+  name: String!  
+  type: Int! 
+  company_name: String!  
+  image: String           
+  youtube_video_id: String 
+}
+
+type DetailAd {
+  node: Ad
+}
+
+type Ad {
+  id: String  
+  name: String!   
+  company_name: String  
+  company_vat: String  
+  "1:圖  4:youtube"
+  type: Int
+  "1:付費廣告"
+  pricing_type: Int
+  image: String           
+  youtube_video_id: String 
+  "最少觀看秒數 "
+  min_view_time: Int
+  "廣告權重"
+  weight: Int
+  "點擊上限"
+  click_qty: Int
+  placement_count: Int
+  click_count: Int
+  "點一次多少錢"
+  cost_per_click: Float
+  costs: Float
+  "每日點擊上限"
+  daily_click_qty: Int
+  "0:直接開通上網"
+  link_type: Int
+  "看完廣告導頁到此URL"
+  url: String
+  copywriting: String
+  comment: String
+  start_datetime: String
+  end_datetime: String
+  "服務開始時間區間"
+  start_timeslot: String
+  "服務結束時間區間"
+  end_timeslot: String
+  """
+  投放廣告的據點,   可填企業Id和據點Id
+  area_list 如果只放一個 id 時，該id 有可能是 companyId，此時代表該companyId下的所有 area 都要播放本廣告
+  ，backend 需要先取出所有 areaid 放入 area_list，不可直接回傳companyId給 frontend
+  """  
+  area_list: [Int]
+  "要返回給 frontend 用的"
+  area_list_obj: [AreaTable]
+}
+
+type AreaTable {
+   id: String
+   name: String
+}
+
+type Mutation {
+  addCompany(
+    groupId: ID!
+    divisionId: ID!
+    name: String
+    logo: String
+    line: String
+    url: String
+    ssid: String
+    serviceIntroduction: String
+    serviceIntroductionEn: String
+    accessTime: Int
+    dailyAccess: Int
+    accessLimit: Int
+    idleTimeout: Int
+    terms: String
+    termsEn: String
+    privacyTerms: String
+    privacyTermsEn: String
+    downloadSpeed: Int
+    uploadSpeed: Int
+    passShowTime: Int
+  ): String
+
+  deleteCompany(groupId: ID!, divisionId: ID!): [String]
+
+  uploadFile(file: Upload!): String!
+  # uploadFile(groupId: ID!, file: Upload!): String!
+  editCompany(
+    groupId: ID!
+    divisionId: ID!
+    name: String
+    logo: String
+    line: String
+    url: String
+    ssid: String
+    serviceIntroduction: String
+    serviceIntroductionEn: String
+    accessTime: Int
+    dailyAccess: Int
+    accessLimit: Int
+    idleTimeout: Int
+    terms: String
+    termsEn: String
+    privacyTerms: String
+    privacyTermsEn: String
+    downloadSpeed: Int
+    uploadSpeed: Int
+    passShowTime: Int
+  ): String
+
+  addArea(
+    groupId: ID!
+    companyId: String!
+    areaName: String!
+    serviceStartDate : String!
+    serviceEndDate : String
+  ): String
+
+  deleteArea(groupId: ID!, areaId: String, companyId: String): [String]
+
+  editArea(
+    groupId: ID!
+    companyId: String!
+    areaId: String!
+    areaName: String!
+    serviceStartDate : String!
+    serviceEndDate : String
+  ): String
+
+  addAd(
+    groupId: ID!
+    companyId: String!
+    wifiAdInput: AddWifiAdInput!
+  ): String
+
+  editAd(
+    groupId: ID!
+    companyId: String!
+    wifiAdInput: EditWifiAdInput!
+  ): String
+
+  deleteAd(groupId: ID!, companyId: String, id: String): [String]
+
+  
+}
+
+input WifiFilter {
+  keyword: String
+  sortField: WifiSortField
+  sortOrder: SortOrder
+}
+
+input AreaFilter {
+  keyword: String
+  sortField: AreaSortField
+  sortOrder: SortOrder
+}
+
+input AdFilter {  
+  keyword: String
+  sortField: AdSortField
+  sortOrder: SortOrder
+}
+
+
+input EditWifiAdInput {
+    id: String!
+    editWifiAdInput: AddWifiAdInput!
+}
+
+input AddWifiAdInput {
+  name: String!   
+  company_name: String  
+  company_vat: String  
+  "1:圖  4:youtube"
+  type: Int
+  "1:付費廣告"
+  pricing_type: Int
+  image: String           
+  youtube_video_id: String 
+  "最少觀看秒數 "
+  min_view_time: Int
+  "廣告權重"
+  weight: Int
+  "點擊上限"
+  click_qty: Int
+  placement_count: Int
+  click_count: Int
+  "點一次多少錢"
+  cost_per_click: Float
+  costs: Float
+  "每日點擊上限"
+  daily_click_qty: Int
+  "0:直接開通上網"
+  link_type: Int
+  "看完廣告導頁到此URL"
+  url: String
+  copywriting: String
+  comment: String
+  start_datetime: String
+  end_datetime: String
+  "服務開始時間區間"
+  start_timeslot: String
+  "服務結束時間區間"
+  end_timeslot: String
+  """
+  投放廣告的據點,   可填企業Id和據點Id
+  area_list 如果只放一個 id 時，該id 有可能是 companyId，此時代表該companyId下的所有 area 都要播放本廣告
+  ，backend 需要先取出所有 areaid 放入 area_list，不可直接回傳companyId給 frontend
+  """  
+  area_list: [Int]
+}
+
+enum WifiSortField {
+  ID
+  COMPANYID
+  NAME
+}
+
+enum AdSortField {
+  ID
+  NAME
+}
+
+enum AreaSortField {
+  ID
+  NAME
+  SERVICESTARTDATE
+  SERVICEENDDATE
+}
+
+type DetailCompanyAdvance {
+  node: CompanyAdvance
+}
+
+type CompanyAdvance {
+  ssid: String
+  serviceIntroduction: String
+  serviceIntroductionEn: String
+  accessTime: Int
+  dailyAccess: Int
+  accessLimit: Int
+  idleTimeout: Int
+  terms: String
+  termsEn: String
+  privacyTerms: String
+  privacyTermsEn: String
+  downloadSpeed: Int
+  uploadSpeed: Int
+  passShowTime: Int
+}
+
+scalar Upload
+ 
+
+
+

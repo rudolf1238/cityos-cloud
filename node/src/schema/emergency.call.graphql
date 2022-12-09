@@ -1,0 +1,8 @@
+
+type Mutation {
+  addEmergencyCallEvent(groupId: ID!, emergencyCallInput: EmergencyCallInput!): String
+}
+input EmergencyCallInput {
+  deviceId: String!
+  ip: String
+}

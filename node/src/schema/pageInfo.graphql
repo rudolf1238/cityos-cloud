@@ -1,0 +1,10 @@
+type PageInfo {
+  """when paginating forwards, the cursor to continue."""
+  endCursor: String
+  """when paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+  """when paginating backwards, the cursor to continue."""
+  beforeCursor: String
+  """when paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+}

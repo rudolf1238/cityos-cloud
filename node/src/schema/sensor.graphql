@@ -1,0 +1,197 @@
+type Query {
+  """(elasticsearch) Get the history of the sensor values from a period of time. Specify the interval in minutes for the statistic range you need."""
+  sensorValuesHistory(deviceId: String!, sensorId: String!, start: Date!, end: Date!, interval: Int = 60): [ISensorData!]
+  """(elasticsearch) Get the history of proper rate for a group from a period of time"""
+  properRateHistory(groupId: ID!, start: Date!, end: Date!): [ProperRateResponse!]
+  """(elasticsearch) Get the history of the sensor values calculated from a group for a period of time."""
+  sensorValueStatsHistory(input: SensorValueStatsHistoryInput!): [ISensorData!]
+  """Get the sensor value at time (ex. get the snapshot at the specific time)"""
+  sensorValueAtTime(deviceId: String!, sensorId: String!, time: Date!): ISensorData
+  """(elasticsearch) Get data for the [Gender and Age] gadget on the dashboard"""
+  gadgetForGenderAndAge(input: GadgetForGenderAndAgeInput!): GenderAndAgeData
+  """(elasticsearch) Get the min, max, avg value of the sensor values from a period of time."""
+  sensorValuesMetricAggregation(deviceId: String!, sensorId: String!, start: Date!, end: Date!): MetricAggregationResponse
+  """(elasticsearch) Get the history of the sensor values of avg from a period of time. Specify the interval in minutes for the statistic range you need."""
+  sensorValuesAvgHistory(deviceId: String!, sensorId: String!, start: Date!, end: Date!, interval: Int = 60): [ISensorData!]
+  """(elasticsearch) Get the raw data of the sensor values from a period of time."""
+  sensorValuesRawHistory(deviceId: String!, sensorId: String!, start: Date!, end: Date!, from: Int, size: Int): [ISensorData!]
+  """(elasticsearch) Get the raw data of the multi sensor from a period of time."""
+  multiSensorValuesRawHistory(deviceId: String!, sensorIds: [String]!, start: Date!, end: Date!, from: Int, size: Int): [MultiISensorData]
+  """Get the prediction of the sensor values from a period of time."""
+  sensorValuesPredict(deviceId: String!, sensorId: String!, seasonalityPeriod: Int!, mode: ExtremeOperation!, start: Date!, end: Date!, interval: Int = 60, pastInterval: Int = 60, lowerBound: Int, upperBound: Int): [ISensorData!]
+}
+
+type Mutation {
+  """Edit the name, description, type, unit or attributes for the sensor."""
+  editSensor(deviceId: String!, sensorId: String!, editSensorInput: EditSensorInput!): Boolean
+  """Update the value of the sensor. For example, control the brightness of the lamp, etc."""
+  updateSensor(deviceId: String!, sensorId: String!, value: Any!): Boolean
+}
+
+type Subscription {
+  """Listen to the specific value updated for the sensorId of the device from CHT IOT platform. 
+  sensorId is not the unique id across the devices and it is the id predefined in the CHT IOT platform."""
+  sensorValueChanged(deviceId: String!, sensorId: String!): SensorResponse!
+  """Listen to the devices status from the CHT IOT platform"""
+  devicesStatusChanged(deviceIds: [String!]!): DeviceStatusResponse!
+  """Listen to the max/min value changed from the specific group."""
+  extremeValueChanged(groupId: ID!, deviceType: DeviceType!, sensorId: String!, option: StatsOption!): ExtremeValueChangedResponse!
+  """Listen to proper rate of the specific group."""
+  properRateChanged(groupId: ID!): ProperRateResponse!
+  """Listen to the stats changed for the specific group. The stats would be within the past {days} days."""
+  sensorValueStatsChanged(groupId: ID!, deviceType: DeviceType!, sensorId: String!, days: Int!, operation: ExtremeOperation!): GaugeSensorData!
+}
+
+input EditSensorInput {
+  name: String
+  desc: String
+  type: SensorType
+  unit: String
+  attributes: [AttributeInput]
+}
+
+"""Statistics of historical values you requested for a period of time, and the range of each data is specified by interval."""
+input SensorValueStatsHistoryInput {
+  groupId: ID!
+  deviceType: DeviceType!
+  sensorId: String!
+  start: Date!
+  end: Date!
+  option: StatsOption!
+  """Specify the interval in minutes for the statistic range you need."""
+  interval: Int = 1440
+}
+
+input StatsOption {
+  """The sensorType TEXT supports COUNT operation only, and GAUGE supports for all operations."""
+  operation: ExtremeOperation!
+  """Statistics for the number of text appeared in the database. Required when the sensorType is TEXT and operation is COUNT."""
+  text: String
+}
+
+input GadgetForGenderAndAgeInput {
+  deviceId: String!
+  start: Date!
+  end: Date!
+  """Specify the interval in minutes for the statistic range you need."""
+  interval: Int = 1440
+}
+
+type SensorResponse {
+  deviceName: String
+  deviceId: String
+  sensorId: String
+  data: ISensorData
+}
+
+interface ISensorData {
+  type: SensorType
+  time: Date
+}
+
+type MultiISensorData {
+  sensorId: String
+  sensorData: [ISensorData]
+}
+
+type GaugeSensorData implements ISensorData {
+  type: SensorType
+  time: Date
+  value: Float
+}
+
+type SnapshotSensorData implements ISensorData {
+  type: SensorType
+  time: Date
+  value: String
+}
+
+type TextSensorData implements ISensorData {
+  type: SensorType
+  time: Date
+  value: String
+}
+
+type SwitchSensorData implements ISensorData {
+  type: SensorType
+  time: Date
+  value: Boolean
+}
+
+type DeviceStatusResponse {
+  deviceId: String
+  status: DeviceStatus
+  time: Date
+}
+
+type Sensor {
+  sensorId: String!
+  name: String!
+  desc: String
+  type: SensorType!
+  deviceType: DeviceType
+  unit: String
+  attributes: [Attribute]
+}
+
+type ProperRateResponse {
+  time: Date!
+  errors: Int!
+  properRate: Int!
+  total: Int!
+}
+
+type ExtremeValueChangedResponse {
+  """The response of the extreme value changed"""
+  response: SensorResponse!
+  """The total number of devices under this division."""
+  total: Int!
+}
+
+type GenderAndAgeData {
+  deviceId: String!
+  deviceName: String!
+  percent: GenderPercent
+  histogram: AgeHistogram
+  history: GenderHistory
+}
+
+type GenderPercent {
+  percentForMale: Int!
+  percentForFemale: Int!
+}
+
+type AgeHistogram {
+  """it should contain 4 values for child, youth, adult and senior (female)"""
+  female: [Int!]!
+  """it should contain 4 values for child, youth, adult and senior (male)"""
+  male: [Int!]!
+}
+
+type GenderHistory {
+  female: [GaugeSensorData!]!
+  male: [GaugeSensorData!]!
+}
+
+enum SensorType {
+  GAUGE
+  SNAPSHOT
+  TEXT
+  SWITCH
+}
+
+enum ExtremeOperation {
+  MAX
+  MIN
+  SUM
+  COUNT
+  AVG
+}
+
+type MetricAggregationResponse {
+  min: Float
+  max: Float
+  avg: Float
+  sum: Float
+  count: Int
+}
