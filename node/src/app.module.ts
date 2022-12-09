@@ -121,7 +121,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
     AutomationModule,
     EmergencyCallModule,
     ESignageCMModule,
-    WifihotspotModule,
+    //WifihotspotModule,
     I18nModule.forRoot({
       fallbackLanguage: 'en-US',
       loaderOptions: {
