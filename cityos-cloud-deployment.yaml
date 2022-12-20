@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cityos-cloud
+spec:
+#  replicas: 2
+  selector:
+    matchLabels:
+      app: cityos-cloud
+  template:
+    metadata:
+      labels:
+        app: cityos-cloud # the label for the pods and the deployments
+    spec:
+      containers:
+      - name: cityos-cloud
+        image: acrcityos.azurecr.io/cityos-cloud:v3.7 # IMPORTANT: update with your own repository
+        #拉image的策略(Always, Never, IfNotPresent)
+        imagePullPolicy: Always
+        stdin: true
+        tty: true
+#        args:
+#        - /bin/sh
+#        - -c
+#        - touch /tmp/healthz
+        ports:
+        - containerPort: 4000 # the application listens to this port
+#        env:
+#        - name: MONGODB_URI # the application expects to find the MongoDB connection details in this environment variable
+#          valueFrom:
+#            secretKeyRef:
+#              name: mongosecret # the name of the Kubernetes secret containing the data
+#              key: MONGOCONNECTION # the key inside the Kubernetes secret containing the data
+        resources:
+          requests: # minimum resources required
+            cpu: 150m
+            memory: 150Mi
+          limits: # maximum resources allocated
+            cpu: 500m
+            memory: 500Mi
+        readinessProbe: # is the container ready to receive traffic?
+          exec:
+            command:
+            - ls
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe: # is the container healthy?
+          exec:
+            command:
+            - ls
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      imagePullSecrets:
+      - name: acr
+
